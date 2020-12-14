@@ -20,6 +20,7 @@
 
 typedef struct	q_list
 {
+	int 		flag;
 	int			minus;
 	int			wide;
 	int 		precision;

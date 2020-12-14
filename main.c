@@ -27,11 +27,22 @@ void	parser(char **str, va_list ap)
 	{
 
 		ft_putchar(**str);
-		str++;
+		(**str)++;
 
 	}
 	else if (ft_strchr(ALL_SYMBOLS, **str))
 	{
+		while (**str != '\0' && **str != '%')
+		{
+			if (**str == '0')
+			{
+				list->flag = 0;
+			}
+			else  if (**str == '-')
+				list->flag = -1;
+			else if (ft_strchr("ALLNUMS", **str))//--------------------------------
+		}
+
 
 	}
 }
@@ -61,7 +72,7 @@ int main(void)
 {
 char *s = "Heloooo";
 //char *p = &s[3];
-ft_printf("text before %%%strtr\n", "Hello", "/bls|");
+ft_printf("text before %strtr\n", "Hello", "/bls|");
 //printf("text before %%%strtr", "Hello");
 //ft_putstr(&s, (p - s));
 //printf("\n%-10.5d\n", 589);
