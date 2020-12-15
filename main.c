@@ -3,7 +3,7 @@
 
 #include "lib/libft.h"
 #include "ft_printf.h"
-
+/*--------------Function Flags------------------------------------------------*/
 void d_function(char *str, va_list ap)
 {
 	int x;
@@ -16,39 +16,69 @@ void s_function(char *str, va_list ap)
 	x = va_arg(ap, char *);
 	printf("%s", x);
 }
-/*--------------Function Flags------------------------------------------------*/
+//flags function
+void	flags(char **str, p_list *list)//флаги
+{
+
+		while (**str == '0' || **str == '-')
+		{
+			if (**str == '0')
+				list->flag = 0;
+			else if (**str == '-')
+				list->flag = -1;
+			(*str)++;
+		}
+}
+//wide function
+void 	wide(char **str, p_list *list)
+{
+	if (**str > '0' && **str <= '9')
+		list->wide = ft_atoi(*str);
+	while (**str > '0' && **str <= '9')
+		(*str)++;
+}
+void 	precision(char **str, p_list *list)
+{
+	if (**str == '.')
+	{
+		list->precision = 0;
+		(*str)++;
+		if (**str > '0' && **str <= '9')
+			list->precision = ft_atoi(*str);
+		while (**str > '0' && **str <= '9')
+			(*str)++;
+	}
+}
+// Precision function
 void	parser(char **str, va_list ap)
 {
 	p_list	*list;
-	if (!(list = (p_list *)malloc(sizeof(p_list))))
-		printf("ERROR MEMORY");											//**** del prinft
 
-	if (**str == '%')
+	if (**str == '%')//Если встретился повторный %
 	{
-
 		ft_putchar(**str);
 		(**str)++;
-
+		return;
 	}
-	else if (ft_strchr(ALL_SYMBOLS, **str))
+	if (ft_strchr(ALL_SYMBOLS, **str))
 	{
-		while (**str != '\0' && **str != '%')
+		//выделяю память под лист
+		if (!(list = (p_list *)malloc(sizeof(p_list))))
+			printf("ERROR MEMORY");											//**** del prinft
+			
+		while (**str != '\0' && **str != '%' && **str !='d')                                //возможно надо удалить
 		{
-			if (**str == '0')
-			{
-				list->flag = 0;
-			}
-			else  if (**str == '-')
-				list->flag = -1;
-			else if (ft_strchr("ALLNUMS", **str))//--------------------------------
+			flags(str, list);
+			wide(str, list);
+			precision(str, list);
+
+
 		}
-
-
 	}
+//			else if (ft_strchr("ALLNUMS", **str))//--------------------------------
 }
 void start_function(char *str, va_list ap)
 {
-
 	while (*str != '\0')
 	{
 		if (*str == '%')
@@ -72,9 +102,9 @@ int main(void)
 {
 char *s = "Heloooo";
 //char *p = &s[3];
-ft_printf("text before %strtr\n", "Hello", "/bls|");
+ft_printf("text before %-1.45dyhy\n", "Hello", "/bls|");
 //printf("text before %%%strtr", "Hello");
 //ft_putstr(&s, (p - s));
-//printf("\n%-10.5d\n", 589);
+printf("\n%0.5d\n", 589);
 	return 0;
 }
