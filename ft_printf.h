@@ -27,4 +27,5 @@ typedef struct	q_list
 	int			size;
 }				p_list;
 void 	ft_putchar(char c);
+void	ft_putnbr(int n);
 #endif //DESAUSAG_FT_PRINTF_H

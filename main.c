@@ -4,32 +4,47 @@
 #include "lib/libft.h"
 #include "ft_printf.h"
 /*--------------Function Flags------------------------------------------------*/
-void d_function(char *str, va_list ap)
+void d_function(p_list *list, va_list ap)
 {
 	int x;
 	x = va_arg(ap, int);
-	printf("%d", x);
+	ft_putnbr(x);
 }
-void s_function(char *str, va_list ap)
+void s_function(p_list *list, va_list ap)
 {
 	char *x;
+
 	x = va_arg(ap, char *);
-	printf("%s", x);
+	while (*x != '\0')
+	{
+		ft_putchar(*x);
+		x++;
+
+	}
 }
 //flags function
-void	flags(char **str, p_list *list)//флаги
+void	processor(char **str, p_list *list, va_list ap)
 {
-
-		while (**str == '0' || **str == '-')
-		{
-			if (**str == '0')
-				list->flag = 0;
-			else if (**str == '-')
-				list->flag = -1;
-			(*str)++;
-		}
+	 if ((ft_strchr("ds", **str)))
+	 {
+	 	if (**str == 'd')
+	 		d_function(list, ap);
+	 	else if (**str == 's')
+	 		s_function(list, ap);
+	 }
+	(*str)++;
 }
-//wide function
+
+void	flags(char **str, p_list *list){
+	while (**str == '0' || **str == '-')
+	{
+		if (**str == '0')
+			list->flag = 0;
+		else if (**str == '-')
+			list->flag = -1;
+		(*str)++;
+	}
+}
 void 	wide(char **str, p_list *list, va_list ap)
 {
 	if (**str > '0' && **str <= '9')
@@ -62,8 +77,7 @@ void 	precision(char **str, p_list *list, va_list ap)
 		}
 	}
 }
-// Precision function
-void	parser(char **str, va_list ap)
+p_list	*parser(char **str, va_list ap)
 {
 	p_list	*list;
 
@@ -71,7 +85,7 @@ void	parser(char **str, va_list ap)
 	{
 		ft_putchar(**str);
 		(**str)++;
-		return;
+		return (0);
 	}
 	if (ft_strchr(ALL_SYMBOLS, **str))
 	{
@@ -79,25 +93,26 @@ void	parser(char **str, va_list ap)
 		if (!(list = (p_list *)malloc(sizeof(p_list))))
 			printf("ERROR MEMORY");											//**** del prinft
 			
-		while (**str != '\0' && **str != '%' && **str !='d')                                //возможно надо удалить
+		while (**str != '\0')                                //возможно надо удалить
 		{
 			flags(str, list);
 			wide(str, list, ap);
 			precision(str, list, ap);
-
-
+			break;
 		}
 	}
-//			else if (ft_strchr("ALLNUMS", **str))//--------------------------------
 }
 void start_function(char *str, va_list ap)
 {
+	p_list *list;
+
 	while (*str != '\0')
 	{
-		if (*str == '%')
+		while (*str == '%')
 		{
 			str++;
-			parser(&str, ap);
+			list = parser(&str, ap);
+			processor(&str, list, ap);
 		}
 		ft_putchar(*str);
 		str++;
@@ -115,9 +130,9 @@ int main(void)
 {
 char *s = "Heloooo";
 //char *p = &s[3];
-ft_printf("text before %-*.45dyhy\n", 20, "Hello", "/bls|");
+ft_printf("text before %-*.45s%dyhy\n", 20, "Hello", 32,  "/bls|");
 //printf("text before %%%strtr", "Hello");
 //ft_putstr(&s, (p - s));
-//printf("\n%*60.50d\n", 100, 589);
+//printf("\n%*60.50tddf\n", 100, 589);
 	return 0;
 }
