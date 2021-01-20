@@ -4,13 +4,20 @@
 #include "lib/libft.h"
 #include "ft_printf.h"
 /*--------------Function Flags------------------------------------------------*/
-void d_function(p_list *list, va_list ap)
+void int_function(p_list *list, va_list ap)
 {
 	int x;
+
 	x = va_arg(ap, int);
+	if (list->precision == 0 && x == 0)
+		while (list->wide)
+		{
+			ft_putchar(' ');
+			(list->wide)--;
+		}
 	ft_putnbr(x);
 }
-void s_function(p_list *list, va_list ap)
+void str_function(p_list *list, va_list ap)
 {
 	char *x;
 
@@ -22,25 +29,33 @@ void s_function(p_list *list, va_list ap)
 
 	}
 }
-//flags function
 void	processor(char **str, p_list *list, va_list ap)
 {
-	 if ((ft_strchr("ds", **str)))
+	 if ((ft_strchr("dscpxXu", **str)))
 	 {
-	 	if (**str == 'd')
-	 		d_function(list, ap);
+	 	if ((**str == 'd') || (**str == 'i'))
+	 		int_function(list, ap);
 	 	else if (**str == 's')
-	 		s_function(list, ap);
+	 		str_function(list, ap);
+//		else if (**str == 'c')
+//			char_function(list, ap);
+//		else if (**str == 'p')
+//			ptr_function(list, ap);
+//		else if (**str == 'x')
+//			hex_function(list, ap);
+//		else if (**str == 'X')
+//			hex_function(list, ap);
+//		else if (**str == 'u')
+//			uint_function(list, ap);
 	 }
 	(*str)++;
 }
-
 void	flags(char **str, p_list *list){
 	while (**str == '0' || **str == '-')
 	{
 		if (**str == '0')
-			list->flag = 0;
-		else if (**str == '-')
+			list->flag = 1;
+		if (**str == '-')
 			list->flag = -1;
 		(*str)++;
 	}
@@ -56,6 +71,11 @@ void 	wide(char **str, p_list *list, va_list ap)
 	else if (**str == '*')
 	{
 		list->wide = va_arg(ap, int);
+		if (list->wide < 0)
+		{
+			list->flag = -1;
+			list->wide *=-1;
+		}
 		(*str)++;
 	}
 }
@@ -77,6 +97,13 @@ void 	precision(char **str, p_list *list, va_list ap)
 		}
 	}
 }
+void 	reset_list(p_list *list)
+{
+	list->flag = 0;
+	list->precision = 0;
+	list->wide = 0;
+	list->minus = 0;
+}
 p_list	*parser(char **str, va_list ap)
 {
 	p_list	*list;
@@ -91,16 +118,17 @@ p_list	*parser(char **str, va_list ap)
 	{
 		//выделяю память под лист
 		if (!(list = (p_list *)malloc(sizeof(p_list))))
-			printf("ERROR MEMORY");											//**** del prinft
+			printf("ERROR MEMORY");										//**** del prinft
+		reset_list(list);
 			
-		while (**str != '\0')                                //возможно надо удалить
+		if (**str != '\0')                                //возможно надо удалить
 		{
 			flags(str, list);
 			wide(str, list, ap);
 			precision(str, list, ap);
-			break;
 		}
 	}
+	return (list);
 }
 void start_function(char *str, va_list ap)
 {
@@ -130,9 +158,9 @@ int main(void)
 {
 char *s = "Heloooo";
 //char *p = &s[3];
-ft_printf("text before %-*.45s%dyhy\n", 20, "Hello", 32,  "/bls|");
+//ft_printf("text before %5dyhy\n", 0);
 //printf("text before %%%strtr", "Hello");
 //ft_putstr(&s, (p - s));
-//printf("\n%*60.50tddf\n", 100, 589);
+//printf("text before %5dyhy\n", 0);
 	return 0;
 }
