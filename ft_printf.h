@@ -28,4 +28,14 @@ typedef struct	q_list
 }				p_list;
 void 	ft_putchar(char c);
 void	ft_putnbr(int n);
+void	int_function(p_list *list, int x);
+void	str_function(p_list *list, char *x);
+void	processor(char **str, p_list *list, va_list ap);
+void	flags(char **str, p_list *list);
+void 	wide(char **str, p_list *list, va_list ap);
+void 	precision(char **str, p_list *list, va_list ap);
+void 	reset_list(p_list *list);
+p_list	*parser(char **str, va_list ap);
+void	start_function(char *str, va_list ap);
+int 	ft_printf(const char *format, ...);
 #endif //DESAUSAG_FT_PRINTF_H
