@@ -4,10 +4,17 @@
 #include "lib/libft.h"
 #include "ft_printf.h"
 /*--------------Function Flags------------------------------------------------*/
+int 	number(char *tmp, p_list *list, int x)
+{
+
+}
 void	int_function(p_list *list, int x)
 {
 	int c;
 	int i;
+	char *tmp;
+	char *tmp2;
+	char *ret;
 
 	c = x;
 	i = 0;
@@ -27,11 +34,20 @@ void	int_function(p_list *list, int x)
 			ft_putchar('-');
 			x *= -1;
 		}
-		while (c / 10)
+		while (x / 10 )
 			i++;
-		list->precision -= i;
-		while (--list->precision > 0)
-			ft_putchar('0');
+		if (list->precision > i)
+		{
+			list->precision = list->precision - i;
+			tmp = ft_calloc(list->precision, 1);
+			i = 0;
+			while (i < list->precision)
+				tmp[i++] = '0';
+		}
+
+
+
+
 	}
 
 	ft_putnbr(x);
@@ -175,9 +191,9 @@ int main(void)
 {
 	char *s = "Heloooo";
 //char *p = &s[3];
-ft_printf("%0.3i\n", -8);
+ft_printf("%0.5i\n", -8);
 //printf("text before %%%strtr", "Hello");
 //ft_putstr(&s, (p - s));
-printf("%-5.3d\n", -8);
+printf("%-.5d\n", -8);
 	return 0;
 }
