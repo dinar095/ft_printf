@@ -51,7 +51,7 @@ void	int_function(p_list *list, int x)
 	{
 		c = wide_proc(list->precision, &tmp, '0', 0);
 	}
-	if (list->wide > c)  //формируем wide
+	if (list->wide > len)  //формируем wide
 	{
 		if (list->flag == 1)
 		{
@@ -163,24 +163,25 @@ void 	precision(char **str, p_list *list, va_list ap)
 		}
 	}
 }
-void 	reset_list(p_list *list)
+p_list 	reset_list(p_list *list)
 {
 	list->flag = 0;
 	list->wide = 0;
 	list->precision = -1;
 	list->minus = 0;
+	return (*list);
 }
-p_list	*parser(char **str, va_list ap)
+p_list	*parser(char **str, va_list ap, p_list *list)
 {
-	p_list	*list;
+//	p_list	*list;
 
 	if (**str == '%')//Если встретился повторный %
 	{
-		ft_putchar(**str);
-		(**str)++;
-		return (0);
+//		ft_putchar(**str);
+//		(**str)++;
+//		return (0);
 	}
-	if (ft_strchr(ALL_SYMBOLS, **str))
+	else if (ft_strchr(ALL_SYMBOLS, **str))
 	{
 		//выделяю память под лист
 		if (!(list = (p_list *)malloc(sizeof(p_list))))
@@ -196,41 +197,56 @@ p_list	*parser(char **str, va_list ap)
 	}
 	return (list);
 }
-void	start_function(char *str, va_list ap, p_list *list)
+int		start_function(char *str, va_list ap)
 {
+	p_list	*list;
+	int		count;
 
-
+	count = 0;
 	while (*str != '\0')
 	{
-		while (*str == '%')
+		if (*str == '%')
 		{
 			str++;
-			list = parser(&str, ap);
+			list = parser(&str, ap, list);
 			processor(&str, list, ap);
 		}
 		ft_putchar(*str);
 		str++;
+		count++;
 	}
 }
 int		ft_printf(const char *format, ...)
 {
-	p_list *list;
-	va_list ap;
+	int		count;
+	va_list	ap;
+
 	va_start(ap, format);
-	start_function((char *)format, ap, list);
+	count = start_function((char *)format, ap);
 	va_end(ap);
-	free(list);
-	return 0;
+	return count;
 }
 
 int main(void)
 {
+	int		a = -4;
+	int		b = 0;
+	char	c = 'a';
+	int		d = 2147483647;
+	int		e = -2147483648;
+	int		f = 42;
+	int		g = 25;
+	int		h = 4200;
+	int		i = 8;
+	int		j = -12;
+	int		k = 123456789;
+	int		l = 0;
+	int		m = -12345678;
 	char *s = "Heloooo";
-//char *p = &s[3];
-ft_printf("%9.7d\n", -123456);
-//printf("text before %%%strtr", "Hello");
-//ft_putstr(&s, (p - s));
-
-printf("%9.7d\n", -123456);
+char *p = &s[3];
+//ft_printf("%1i, %1d, %1d, %1d, %1d, %1d, %1d, %1d\n", i, j, k, l, m, c, e, d);
+ft_printf("%%d %d\n", 5, 6);
+printf("%%d %d\n", 5, 6);
+//printf("%1i, %1d, %1d, %1d, %1d, %1d, %1d, %1d", i, j, k, l, m, c, e, d);
 	return 0;
 }
