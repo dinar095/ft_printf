@@ -4,20 +4,32 @@
 #include "lib/libft.h"
 #include "ft_printf.h"
 /*--------------Function Flags------------------------------------------------*/
-int 	number(char *tmp, p_list *list, int x)
-{
 
+
+int wide_proc(int wide, char **d, char sym, int reverse) //возвращает строку с 0 спереди| В wide подать с учетом знака
+{
+	// wp - wide or precision
+	char 	*tmp;
+	int 	cint;
+	tmp = ft_calloc(wide, sizeof(char)); //создать строку
+	ft_strset(tmp, sym, wide); //забить всю строку символом с
+	cint = ft_strlen(*d);//длина числа без -
+	wide -= cint;
+	if (!reverse)
+		ft_memcpy(tmp + wide, *d, cint);//добавить число в конце
+	else
+		ft_memcpy(tmp, *d, cint); //добавить число в начале
+	free(*d);
+	*d = tmp;
+	return (ft_strlen(tmp));
 }
 void	int_function(p_list *list, int x)
 {
 	int c;
-	int i;
+	int len;
 	char *tmp;
-	char *tmp2;
-	char *ret;
 
-	c = x;
-	i = 0;
+	c = 0;
 	if (list->precision == 0 && x == 0)
 	{
 		while (list->wide)
@@ -26,31 +38,48 @@ void	int_function(p_list *list, int x)
 			(list->wide)--;
 		}
 	}
-
-	if (list->precision > 0)
+	if (x < 0 && x != -2147483648)
 	{
-		if (x < 0 && x != -2147483648)
-		{
-			ft_putchar('-');
-			x *= -1;
-		}
-		while (x / 10 )
-			i++;
-		if (list->precision > i)
-		{
-			list->precision = list->precision - i;
-			tmp = ft_calloc(list->precision, 1);
-			i = 0;
-			while (i < list->precision)
-				tmp[i++] = '0';
-		}
-
-
-
-
+		list->minus = 1;
+		list->wide -=1;
+		x *= -1;
 	}
-
-	ft_putnbr(x);
+	tmp = ft_itoa(x);
+	len = ft_strlen(tmp);
+	if (list->precision > len) //формируем precision
+	{
+		c = wide_proc(list->precision, &tmp, '0', 0);
+	}
+	if (list->wide > c)
+	{
+		if (list->flag == 1)
+		{
+			if (list->minus == 1)
+			{
+				list->minus = 0;
+				ft_putchar('-');
+			}
+			c = wide_proc(list->wide, &tmp, '0', 0);
+		}
+		else if (list->flag == -1)
+		{
+			c = wide_proc(list->wide, &tmp, ' ', 1);
+		}
+		else
+		{
+			if (list->minus == 1)
+			{
+				list->minus = 0;
+				list->wide++;
+				tmp = ft_strjoin("-", tmp); //malloc!
+			}
+			c = wide_proc(list->wide, &tmp, ' ', 0);
+		}
+	}
+	if (list->minus)
+		ft_putchar('-');
+	ft_putstr(tmp);
+	free(tmp);
 }
 void	str_function(p_list *list, char *x)
 {
@@ -97,7 +126,7 @@ void 	wide(char **str, p_list *list, va_list ap)
 	if (**str >= '0' && **str <= '9')
 	{
 		list->wide = ft_atoi(*str);
-		while (**str > '0' && **str <= '9')
+		while (**str >= '0' && **str <= '9')
 			(*str)++;
 	}
 	else if (**str == '*')
@@ -116,6 +145,8 @@ void 	precision(char **str, p_list *list, va_list ap)
 	if (**str == '.')
 	{
 		list->precision = 0;
+		if (list->flag == 1)
+			list->flag = 0;
 		(*str)++;
 		if (**str >= '0' && **str <= '9')
 		{
@@ -191,9 +222,9 @@ int main(void)
 {
 	char *s = "Heloooo";
 //char *p = &s[3];
-ft_printf("%0.5i\n", -8);
+ft_printf("%9.7d\n", -123456);
 //printf("text before %%%strtr", "Hello");
 //ft_putstr(&s, (p - s));
-printf("%-.5d\n", -8);
+printf("%9.7d\n", -123456);
 	return 0;
 }
