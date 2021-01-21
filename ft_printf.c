@@ -28,6 +28,7 @@ void	int_function(p_list *list, int x)
 	int c;
 	int len;
 	char *tmp;
+	char *tmp2;
 
 	c = 0;
 	if (list->precision == 0 && x == 0)
@@ -50,7 +51,7 @@ void	int_function(p_list *list, int x)
 	{
 		c = wide_proc(list->precision, &tmp, '0', 0);
 	}
-	if (list->wide > c)
+	if (list->wide > c)  //формируем wide
 	{
 		if (list->flag == 1)
 		{
@@ -71,7 +72,9 @@ void	int_function(p_list *list, int x)
 			{
 				list->minus = 0;
 				list->wide++;
+				tmp2 = tmp;
 				tmp = ft_strjoin("-", tmp); //malloc!
+				free(tmp2);
 			}
 			c = wide_proc(list->wide, &tmp, ' ', 0);
 		}
@@ -193,9 +196,9 @@ p_list	*parser(char **str, va_list ap)
 	}
 	return (list);
 }
-void	start_function(char *str, va_list ap)
+void	start_function(char *str, va_list ap, p_list *list)
 {
-	p_list *list;
+
 
 	while (*str != '\0')
 	{
@@ -211,10 +214,12 @@ void	start_function(char *str, va_list ap)
 }
 int		ft_printf(const char *format, ...)
 {
+	p_list *list;
 	va_list ap;
 	va_start(ap, format);
-	start_function((char *)format, ap);
+	start_function((char *)format, ap, list);
 	va_end(ap);
+	free(list);
 	return 0;
 }
 
@@ -225,6 +230,7 @@ int main(void)
 ft_printf("%9.7d\n", -123456);
 //printf("text before %%%strtr", "Hello");
 //ft_putstr(&s, (p - s));
+
 printf("%9.7d\n", -123456);
 	return 0;
 }
