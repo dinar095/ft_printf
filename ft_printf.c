@@ -1,14 +1,13 @@
 #include <stdio.h>
 
 
-#include "lib/libft.h"
+#include "libft/libft.h"
 #include "ft_printf.h"
 /*--------------Function Flags------------------------------------------------*/
 
 
 int wide_proc(int wide, char **d, char sym, int reverse) //возвращает строку с 0 спереди| В wide подать с учетом знака
 {
-	// wp - wide or precision
 	char 	*tmp;
 	int 	cint;
 	tmp = ft_calloc(wide, sizeof(char)); //создать строку
@@ -52,9 +51,7 @@ int		int_function(p_list **list, int x)
 	tmp = ft_itoa(x);
 	len = ft_strlen(tmp);
 	if ((*list)->precision > len) //формируем precision
-	{
 		wide_proc((*list)->precision, &tmp, '0', 0);
-	}
 	if ((*list)->wide > len)  //формируем wide
 	{
 		if ((*list)->flag == 1)
@@ -89,21 +86,25 @@ int		int_function(p_list **list, int x)
 	free(tmp);
 	return (count);
 }
-int		str_function(p_list **list, char *x)
+int		c_function(p_list **list, char x)
 {
-	int		len;
-	char 	*tmp;
+	int len;
+	char *tmp;
 
-	tmp = ft_strdup(x);
+	tmp = &x;
+	(*list)->precision = 1;
+	tmp = ft_strdup(tmp);
 	len = ft_strlen(tmp);
-	if ((*list)->precision >= 0 && (size_t)((*list)->precision) > len) //сфоромировать строку исходя из precision
+	if ((*list)->precision >= 0 && (size_t) ((*list)->precision) > len)
 		(*list)->precision = len;
+	//сформировать precision
 	if ((*list)->precision >= 0 && (*list)->precision < len)
 	{
 		ft_memset(tmp + (*list)->precision, '\0', 1);
 		wide_proc((*list)->precision, &tmp, '0', 0);\
+
 	}
-	//добавить к prec спереди или сзади символы
+	//сформировать wide
 	if ((*list)->wide > ft_strlen(tmp))
 	{
 		if ((*list)->flag == 1)
@@ -114,40 +115,277 @@ int		str_function(p_list **list, char *x)
 			wide_proc((*list)->wide, &tmp, ' ', 0);
 	}
 	len = ft_putstr(tmp);
-	//printf("%d - len\n", len);
 	free(tmp);
 	return (len);
+}
+int		str_function(p_list **list, char *x)
+{
+	int len;
+	char *tmp;
 
+	if (!x)
+	{
+		x = "(null)";
+	}
+	tmp = ft_strdup(x);
+	len = ft_strlen(tmp);
+	if ((*list)->precision >= 0 && (size_t) ((*list)->precision) > len)
+		(*list)->precision = len;
+	//сформировать precision
+	if ((*list)->precision >= 0 && (*list)->precision < len)
+	{
+		ft_memset(tmp + (*list)->precision, '\0', 1);
+		wide_proc((*list)->precision, &tmp, '0', 0);
+
+	}
+	//сформировать wide
+	if ((*list)->wide > ft_strlen(tmp))
+	{
+		if ((*list)->flag == 1)
+			wide_proc((*list)->wide, &tmp, '0', 0);
+		else if ((*list)->flag == -1)
+			wide_proc((*list)->wide, &tmp, ' ', 1);
+		else
+			wide_proc((*list)->wide, &tmp, ' ', 0);
+	}
+	len = ft_putstr(tmp);
+	free(tmp);
+	return (len);
+}
+int		ptr_function(p_list **list, unsigned long long x)
+{
+	{
+		int len;
+		int count;
+		char *tmp;
+
+		count = 0;
+
+		if ((*list)->precision == 0 && x == 0)
+		{
+			while ((*list)->wide)
+			{
+				count += ft_putchar(' ');
+				((*list)->wide)--;
+			}
+			return (count);
+		}
+		if ((*list)->precision >= 0 && (*list)->flag == 1)
+			(*list)->flag = 0;
+		tmp = ft_itoa_uhex(x);
+		len = ft_strlen(tmp);
+		if ((*list)->precision > len) //формируем precision
+		{
+			wide_proc((*list)->precision, &tmp, '0', 0);
+			wide_proc((*list)->precision + 1, &tmp, 'x', 0);
+			wide_proc((*list)->precision + 2, &tmp, '0', 0);
+		}
+		if ((*list)->wide > len)  //формируем wide
+		{
+			if ((*list)->flag == 1)
+			{
+				wide_proc((*list)->wide - 2, &tmp, '0', 0);
+				wide_proc((*list)->wide - 1, &tmp, 'x', 0);
+				wide_proc((*list)->wide, &tmp, '0', 0);
+			} else if ((*list)->flag == -1)
+			{
+				wide_proc((*list)->wide, &tmp, ' ', 1);
+			} else
+			{
+				wide_proc((*list)->wide, &tmp, 'x', 0);
+				wide_proc((*list)->wide, &tmp, '0', 0);
+				wide_proc((*list)->wide, &tmp, ' ', 0);
+			}
+		}
+		count += ft_putstr(tmp);
+		free(tmp);
+		return (count);
+	}
+}
+int 	uint_function(p_list **list, unsigned int x)
+{
+	int		len;
+	int 	count;
+	char	*tmp;
+	char	*tmp2;
+
+	count = 0;
+
+	if ((*list)->precision == 0 && x == 0)
+	{
+		while ((*list)->wide)
+		{
+			count += ft_putchar(' ');
+			((*list)->wide)--;
+		}
+		return (count);
+	}
+	if ((*list)->precision >= 0 && (*list)->flag == 1)
+		(*list)->flag = 0;
+
+	tmp = ft_uitoa(x);
+	len = ft_strlen(tmp);
+	if ((*list)->precision > len) //формируем precision
+		wide_proc((*list)->precision, &tmp, '0', 0);
+	if ((*list)->wide > len)  //формируем wide
+	{
+		if ((*list)->flag == 1)
+		{
+			if ((*list)->minus == 1)
+			{
+				(*list)->minus = 0;
+				count += ft_putchar('-');
+			}
+			wide_proc((*list)->wide, &tmp, '0', 0);
+		}
+		else if ((*list)->flag == -1)
+			wide_proc((*list)->wide, &tmp, ' ', 1);
+		else
+		{
+			if ((*list)->minus == 1)
+			{
+				(*list)->minus = 0;
+				(*list)->wide++;
+				tmp2 = tmp;
+				tmp = ft_strjoin("-", tmp); //malloc!
+				free(tmp2);
+			}
+			wide_proc((*list)->wide, &tmp, ' ', 0);
+		}
+	}
+	if ((*list)->minus)
+		count += ft_putchar('-');
+	count += ft_putstr(tmp);
+	free(tmp);
+	return (count);
+}
+int 	x_function(p_list **list, unsigned long long x)
+{
+	int		len;
+	int 	count;
+	char	*tmp;
+	char	*tmp2;
+
+	count = 0;
+
+	if ((*list)->precision == 0 && x == 0)
+	{
+		while ((*list)->wide)
+		{
+			count += ft_putchar(' ');
+			((*list)->wide)--;
+		}
+		return (count);
+	}
+	if ((*list)->precision >= 0 && (*list)->flag == 1)
+		(*list)->flag = 0;
+
+	tmp = ft_itoa_uhex(x);
+	len = ft_strlen(tmp);
+	if ((*list)->precision > len) //формируем precision
+		wide_proc((*list)->precision, &tmp, '0', 0);
+	if ((*list)->wide > len)  //формируем wide
+	{
+		if ((*list)->flag == 1)
+			wide_proc((*list)->wide, &tmp, '0', 0);
+		else if ((*list)->flag == -1)
+			wide_proc((*list)->wide, &tmp, ' ', 1);
+		else
+		{
+			if ((*list)->minus == 1)
+			{
+				(*list)->minus = 0;
+				(*list)->wide++;
+				tmp2 = tmp;
+				tmp = ft_strjoin("-", tmp); //malloc!
+				free(tmp2);
+			}
+			wide_proc((*list)->wide, &tmp, ' ', 0);
+		}
+	}
+	count += ft_putstr(tmp);
+	free(tmp);
+	return (count);
+}
+int 	bx_function(p_list **list, unsigned long long x)
+{
+	int		len;
+	int 	count;
+	char	*tmp;
+	char	*tmp2;
+
+	count = 0;
+
+	if ((*list)->precision == 0 && x == 0)
+	{
+		while ((*list)->wide)
+		{
+			count += ft_putchar(' ');
+			((*list)->wide)--;
+		}
+		return (count);
+	}
+	if ((*list)->precision >= 0 && (*list)->flag == 1)
+		(*list)->flag = 0;
+
+	tmp = ft_hex_big_itoa(x);
+	len = ft_strlen(tmp);
+	if ((*list)->precision > len) //формируем precision
+		wide_proc((*list)->precision, &tmp, '0', 0);
+	if ((*list)->wide > len)  //формируем wide
+	{
+		if ((*list)->flag == 1)
+			wide_proc((*list)->wide, &tmp, '0', 0);
+		else if ((*list)->flag == -1)
+			wide_proc((*list)->wide, &tmp, ' ', 1);
+		else
+		{
+			if ((*list)->minus == 1)
+			{
+				(*list)->minus = 0;
+				(*list)->wide++;
+				tmp2 = tmp;
+				tmp = ft_strjoin("-", tmp); //malloc!
+				free(tmp2);
+			}
+			wide_proc((*list)->wide, &tmp, ' ', 0);
+		}
+	}
+	count += ft_putstr(tmp);
+	free(tmp);
+	return (count);
 }
 int		processor(char **str, p_list *list, va_list ap)
 {
 	int count;
 
 	count = 0;
-	if (ft_strchr("dis", **str))
-	{
-		if ((**str == 'd') || (**str == 'i'))
-			count += int_function(&list, va_arg(ap, int));
-		else if (**str == 's')
-			count += str_function(&list, va_arg(ap, char *));
-//		else if (**str == 'c')
-//			char_function(list, ap);
-//		else if (**str == 'p')
-//			ptr_function(list, ap);
-//		else if (**str == 'x')
-//			hex_function(list, ap);
-//		else if (**str == 'X')
-//			hex_function(list, ap);
-//		else if (**str == 'u')
-//			uint_function(list, ap);
-		(*str)++;
-	}
+	if ((**str == 'd') || (**str == 'i'))
+		count += int_function(&list, va_arg(ap, int));
+	else if (**str == 's')
+		count += str_function(&list, va_arg(ap, char *));
+	else if (**str == 'c')
+		count += c_function(&list, va_arg(ap, int));
+	else if (**str == '%')
+		count += str_function(&list,"%");
+	else if (**str == 'p')
+		count += ptr_function(&list, va_arg(ap, unsigned long long));
+	else if (**str == 'x')
+		count += x_function(&list, va_arg(ap, unsigned long long));
+	else if (**str == 'X')
+		count += bx_function(&list, va_arg(ap, unsigned long long));
+		else if (**str == 'u')
+			count += uint_function(&list, va_arg(ap, unsigned long long));
+	else
+		return 0;
+
+	(*str)++;
 	return (count);
 }
 void	flags(char **str, p_list **list){
 	while (**str == '0' || **str == '-')
 	{
-		if (**str == '0')
+		if (**str == '0' && (*list)->flag != -1)
 			(*list)->flag = 1;
 		if (**str == '-')
 			(*list)->flag = -1;
@@ -178,8 +416,7 @@ void 	precision(char **str, p_list **list, va_list ap)
 	if (**str == '.')
 	{
 		(*list)->precision = 0;
-//		if ((*list)->flag == 1)
-//			(*list)->flag = 0;
+
 		(*str)++;
 		if (**str >= '0' && **str <= '9')
 		{
@@ -190,6 +427,7 @@ void 	precision(char **str, p_list **list, va_list ap)
 		else if (**str == '*')
 		{
 			(*list)->precision = va_arg(ap, int);
+			(*str)++;
 		}
 	}
 }
@@ -202,13 +440,7 @@ void 	reset_list(p_list **list)
 }
 void	parser(char **str, va_list ap, p_list *list)
 {
-	if (**str == '%')//Если встретился повторный %
-	{
-//		ft_putchar(**str);
-//		(**str)++;
-//		return (0);
-	}
-	else if (ft_strchr(ALL_SYMBOLS, **str))
+	if (ft_strchr(ALL_SYMBOLS, **str))
 	{
 		reset_list(&list);
 		if (**str != '\0')                                //возможно надо удалить
@@ -227,7 +459,7 @@ int		start_function(char *str, va_list ap)
 	count = 0;
 	while (*str != '\0')
 	{
-		if (*str == '%')
+		while (*str == '%')
 		{
 			str++;
 			parser(&str, ap, &list);
@@ -252,29 +484,13 @@ int		ft_printf(const char *format, ...)
 	return (count);
 }
 
-int main(void)
-{
-	int		a = -4;
-	int		b = 0;
-	char	c = 'a';
-	int		d = 2147483647;
-	int		e = -2147483648;
-	int		f = 42;
-	int		g = 25;
-	int		h = 4200;
-	int		i = 8;
-	int		j = -12;
-	int		k = 123456789;
-	int		l = 0;
-	int		m = -12345678;
-	char *s = "Heloooo";
-char *p = &s[3];
-//ft_printf("%7.3i, %1d, %1d, %1d, %1d, %1d, %1d, %1d\n", -i, j, k, l, m, c, e, d);
-
-ft_printf(":O %d\n", ft_printf("%-15.10d", 58));
-printf(":P %d", printf("%-15.10s", 58));
-
-//printf(":K %d \n", printf("%-15.10s", s));
-//printf("%1i, %1d, %1d, %1d, %1d, %1d, %1d, %1d", i, j, k, l, m, c, e, d);
-	return 0;
-}
+//int main(void)
+//{
+//
+////ft_printf("%7.3i, %1d, %1d, %1d, %1d, %1d, %1d, %1d\n", -i, j, k, l, m, c, e, d);
+//
+//ft_printf("%05d", 35);
+////printf("%d\n", printf("%-5,h", &i));
+//
+//	return 0;
+//}

@@ -6,7 +6,7 @@
 /*   By: desausag <desausag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/31 13:24:50 by desausag          #+#    #+#             */
-/*   Updated: 2020/11/18 12:19:09 by desausag         ###   ########.fr       */
+/*   Updated: 2021/01/22 21:08:41 by desausag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,4 +114,11 @@ void				ft_lstiter(t_list *lst, void (*f)(void *));
 
 t_list				*ft_lstmap(t_list *lst, void *(*f)(void *), \
 					void (*del)(void *));
+
+char				*ft_itoa_uhex(unsigned long long n);
+
+char				*ft_uitoa(unsigned int n);
+
+char				*ft_hex_big_itoa(unsigned long long n);
+
 #endif

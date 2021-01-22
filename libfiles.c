@@ -1,6 +1,7 @@
 #include "ft_printf.h"
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 int		ft_putchar(char c)
 {

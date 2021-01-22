@@ -6,7 +6,7 @@
 #    By: desausag <desausag@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/04 12:21:58 by desausag          #+#    #+#              #
-#    Updated: 2020/11/20 11:39:18 by desausag         ###   ########.fr        #
+#    Updated: 2021/01/22 21:20:31 by desausag         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,9 @@ FUNCTIONS = ft_isalnum ft_isalpha ft_isdigit ft_isascii \
 				ft_strlcpy ft_strnstr ft_strdup ft_calloc \
 				ft_substr ft_strjoin ft_strtrim ft_itoa \
 				ft_putchar_fd ft_putstr_fd ft_putendl_fd \
-				ft_putnbr_fd ft_strmapi ft_split
+				ft_putnbr_fd ft_strmapi ft_split ft_hex_itoa \
+				ft_uitoa ft_hex_big_itoa
+
 
 BONUS = ft_lstnew ft_lstadd_front ft_lstsize ft_lstlast ft_lstadd_back \
 		ft_lstdelone ft_lstclear ft_lstiter ft_lstmap
