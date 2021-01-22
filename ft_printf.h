@@ -6,7 +6,7 @@
 /*   By: desausag <desausag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 12:15:50 by desausag          #+#    #+#             */
-/*   Updated: 2021/01/22 09:26:03 by desausag         ###   ########.fr       */
+/*   Updated: 2021/01/22 09:33:50 by desausag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void 	wide(char **str, p_list **list, va_list ap);
 void	flags(char **str, p_list **list);
 int		processor(char **str, p_list *list, va_list ap);
 int		int_function(p_list **list, int x);
-void	str_function(p_list *list, char *x);
+int		str_function(p_list **list, char *x);
 int		wide_proc(int wide, char **d, char sym, int reverse);
 int 	ft_putchar(char c);
 int		ft_putnbr(int n);

@@ -31,6 +31,7 @@ int		int_function(p_list **list, int x)
 	char	*tmp2;
 
 	count = 0;
+
 	if ((*list)->precision == 0 && x == 0)
 	{
 		while ((*list)->wide)
@@ -40,6 +41,8 @@ int		int_function(p_list **list, int x)
 		}
 		return (count);
 	}
+	if ((*list)->precision >= 0 && (*list)->flag == 1)
+		(*list)->flag = 0;
 	if (x < 0 && x != -2147483648)
 	{
 		(*list)->minus = 1;
@@ -86,14 +89,35 @@ int		int_function(p_list **list, int x)
 	free(tmp);
 	return (count);
 }
-void	str_function(p_list *list, char *x)
+int		str_function(p_list **list, char *x)
 {
-	while (*x != '\0')
-	{
-		ft_putchar(*x);
-		x++;
+	int		len;
+	char 	*tmp;
 
+	tmp = ft_strdup(x);
+	len = ft_strlen(tmp);
+	if ((*list)->precision >= 0 && (size_t)((*list)->precision) > len) //сфоромировать строку исходя из precision
+		(*list)->precision = len;
+	if ((*list)->precision >= 0 && (*list)->precision < len)
+	{
+		ft_memset(tmp + (*list)->precision, '\0', 1);
+		wide_proc((*list)->precision, &tmp, '0', 0);\
 	}
+	//добавить к prec спереди или сзади символы
+	if ((*list)->wide > ft_strlen(tmp))
+	{
+		if ((*list)->flag == 1)
+			wide_proc((*list)->wide, &tmp, '0', 0);
+		else if ((*list)->flag == -1)
+			wide_proc((*list)->wide, &tmp, ' ', 1);
+		else
+			wide_proc((*list)->wide, &tmp, ' ', 0);
+	}
+	len = ft_putstr(tmp);
+	//printf("%d - len\n", len);
+	free(tmp);
+	return (len);
+
 }
 int		processor(char **str, p_list *list, va_list ap)
 {
@@ -105,7 +129,7 @@ int		processor(char **str, p_list *list, va_list ap)
 		if ((**str == 'd') || (**str == 'i'))
 			count += int_function(&list, va_arg(ap, int));
 		else if (**str == 's')
-			str_function(list, va_arg(ap, char *));
+			count += str_function(&list, va_arg(ap, char *));
 //		else if (**str == 'c')
 //			char_function(list, ap);
 //		else if (**str == 'p')
@@ -154,8 +178,8 @@ void 	precision(char **str, p_list **list, va_list ap)
 	if (**str == '.')
 	{
 		(*list)->precision = 0;
-		if ((*list)->flag == 1)
-			(*list)->flag = 0;
+//		if ((*list)->flag == 1)
+//			(*list)->flag = 0;
 		(*str)++;
 		if (**str >= '0' && **str <= '9')
 		{
@@ -208,10 +232,12 @@ int		start_function(char *str, va_list ap)
 			str++;
 			parser(&str, ap, &list);
 			count += processor(&str, &list, ap);
-			printf("==%d\n", count);
 		}
-		count += ft_putchar(*str);
-		str++;
+		if (*str)
+		{
+			count += ft_putchar(*str);
+			str++;
+		}
 	}
 	return (count);
 }
@@ -243,9 +269,12 @@ int main(void)
 	int		m = -12345678;
 	char *s = "Heloooo";
 char *p = &s[3];
-//ft_printf("%-7.3i, %1d, %1d, %1d, %1d, %1d, %1d, %1d\n", -i, j, k, l, m, c, e, d);
-ft_printf("*%d\n", ft_printf("Hello\n", i));
-//printf("%%d %d\n", 5, 6);
+//ft_printf("%7.3i, %1d, %1d, %1d, %1d, %1d, %1d, %1d\n", -i, j, k, l, m, c, e, d);
+
+ft_printf(":O %d\n", ft_printf("%-15.10d", 58));
+printf(":P %d", printf("%-15.10s", 58));
+
+//printf(":K %d \n", printf("%-15.10s", s));
 //printf("%1i, %1d, %1d, %1d, %1d, %1d, %1d, %1d", i, j, k, l, m, c, e, d);
 	return 0;
 }
