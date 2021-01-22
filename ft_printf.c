@@ -23,66 +23,68 @@ int wide_proc(int wide, char **d, char sym, int reverse) //возвращает 
 	*d = tmp;
 	return (ft_strlen(tmp));
 }
-void	int_function(p_list *list, int x)
+int		int_function(p_list **list, int x)
 {
-	int c;
-	int len;
-	char *tmp;
-	char *tmp2;
+	int		len;
+	int 	count;
+	char	*tmp;
+	char	*tmp2;
 
-	c = 0;
-	if (list->precision == 0 && x == 0)
+	count = 0;
+	if ((*list)->precision == 0 && x == 0)
 	{
-		while (list->wide)
+		while ((*list)->wide)
 		{
-			ft_putchar(' ');
-			(list->wide)--;
+			count += ft_putchar(' ');
+			((*list)->wide)--;
 		}
+		return (count);
 	}
 	if (x < 0 && x != -2147483648)
 	{
-		list->minus = 1;
-		list->wide -=1;
+		(*list)->minus = 1;
+		(*list)->wide -=1;
 		x *= -1;
 	}
 	tmp = ft_itoa(x);
 	len = ft_strlen(tmp);
-	if (list->precision > len) //формируем precision
+	if ((*list)->precision > len) //формируем precision
 	{
-		c = wide_proc(list->precision, &tmp, '0', 0);
+		wide_proc((*list)->precision, &tmp, '0', 0);
 	}
-	if (list->wide > len)  //формируем wide
+	if ((*list)->wide > len)  //формируем wide
 	{
-		if (list->flag == 1)
+		if ((*list)->flag == 1)
 		{
-			if (list->minus == 1)
+			if ((*list)->minus == 1)
 			{
-				list->minus = 0;
-				ft_putchar('-');
+				(*list)->minus = 0;
+				count += ft_putchar('-');
 			}
-			c = wide_proc(list->wide, &tmp, '0', 0);
+			wide_proc((*list)->wide, &tmp, '0', 0);
 		}
-		else if (list->flag == -1)
+		else if ((*list)->flag == -1)
 		{
-			c = wide_proc(list->wide, &tmp, ' ', 1);
+			wide_proc((*list)->wide, &tmp, ' ', 1);
 		}
 		else
 		{
-			if (list->minus == 1)
+			if ((*list)->minus == 1)
 			{
-				list->minus = 0;
-				list->wide++;
+				(*list)->minus = 0;
+				(*list)->wide++;
 				tmp2 = tmp;
 				tmp = ft_strjoin("-", tmp); //malloc!
 				free(tmp2);
 			}
-			c = wide_proc(list->wide, &tmp, ' ', 0);
+			wide_proc((*list)->wide, &tmp, ' ', 0);
 		}
 	}
-	if (list->minus)
-		ft_putchar('-');
-	ft_putstr(tmp);
+	if ((*list)->minus)
+		count += ft_putchar('-');
+	count += ft_putstr(tmp);
 	free(tmp);
+	return (count);
 }
 void	str_function(p_list *list, char *x)
 {
@@ -93,12 +95,15 @@ void	str_function(p_list *list, char *x)
 
 	}
 }
-void	processor(char **str, p_list *list, va_list ap)
+int		processor(char **str, p_list *list, va_list ap)
 {
+	int count;
+
+	count = 0;
 	if (ft_strchr("dis", **str))
 	{
 		if ((**str == 'd') || (**str == 'i'))
-			int_function(list, va_arg(ap, int));
+			count += int_function(&list, va_arg(ap, int));
 		else if (**str == 's')
 			str_function(list, va_arg(ap, char *));
 //		else if (**str == 'c')
@@ -113,68 +118,66 @@ void	processor(char **str, p_list *list, va_list ap)
 //			uint_function(list, ap);
 		(*str)++;
 	}
+	return (count);
 }
-void	flags(char **str, p_list *list){
+void	flags(char **str, p_list **list){
 	while (**str == '0' || **str == '-')
 	{
 		if (**str == '0')
-			list->flag = 1;
+			(*list)->flag = 1;
 		if (**str == '-')
-			list->flag = -1;
+			(*list)->flag = -1;
 		(*str)++;
 	}
 }
-void 	wide(char **str, p_list *list, va_list ap)
+void 	wide(char **str, p_list **list, va_list ap)
 {
 	if (**str >= '0' && **str <= '9')
 	{
-		list->wide = ft_atoi(*str);
+		(*list)->wide = ft_atoi(*str);
 		while (**str >= '0' && **str <= '9')
 			(*str)++;
 	}
 	else if (**str == '*')
 	{
-		list->wide = va_arg(ap, int);
-		if (list->wide < 0)
+		(*list)->wide = va_arg(ap, int);
+		if ((*list)->wide < 0)
 		{
-			list->flag = -1;
-			list->wide *=-1;
+			(*list)->flag = -1;
+			(*list)->wide *=-1;
 		}
 		(*str)++;
 	}
 }
-void 	precision(char **str, p_list *list, va_list ap)
+void 	precision(char **str, p_list **list, va_list ap)
 {
 	if (**str == '.')
 	{
-		list->precision = 0;
-		if (list->flag == 1)
-			list->flag = 0;
+		(*list)->precision = 0;
+		if ((*list)->flag == 1)
+			(*list)->flag = 0;
 		(*str)++;
 		if (**str >= '0' && **str <= '9')
 		{
-			list->precision = ft_atoi(*str);
+			(*list)->precision = ft_atoi(*str);
 			while (**str >= '0' && **str <= '9')
 				(*str)++;
 		}
 		else if (**str == '*')
 		{
-			list->precision = va_arg(ap, int);
+			(*list)->precision = va_arg(ap, int);
 		}
 	}
 }
-p_list 	reset_list(p_list *list)
+void 	reset_list(p_list **list)
 {
-	list->flag = 0;
-	list->wide = 0;
-	list->precision = -1;
-	list->minus = 0;
-	return (*list);
+	(*list)->flag = 0;
+	(*list)->wide = 0;
+	(*list)->precision = -1;
+	(*list)->minus = 0;
 }
-p_list	*parser(char **str, va_list ap, p_list *list)
+void	parser(char **str, va_list ap, p_list *list)
 {
-//	p_list	*list;
-
 	if (**str == '%')//Если встретился повторный %
 	{
 //		ft_putchar(**str);
@@ -183,23 +186,18 @@ p_list	*parser(char **str, va_list ap, p_list *list)
 	}
 	else if (ft_strchr(ALL_SYMBOLS, **str))
 	{
-		//выделяю память под лист
-		if (!(list = (p_list *)malloc(sizeof(p_list))))
-			printf("ERROR MEMORY");										//**** del prinft
-		reset_list(list);
-			
+		reset_list(&list);
 		if (**str != '\0')                                //возможно надо удалить
 		{
-			flags(str, list);
-			wide(str, list, ap);
-			precision(str, list, ap);
+			flags(str, &list);
+			wide(str, &list, ap);
+			precision(str, &list, ap);
 		}
 	}
-	return (list);
 }
 int		start_function(char *str, va_list ap)
 {
-	p_list	*list;
+	p_list	list;
 	int		count;
 
 	count = 0;
@@ -208,13 +206,14 @@ int		start_function(char *str, va_list ap)
 		if (*str == '%')
 		{
 			str++;
-			list = parser(&str, ap, list);
-			processor(&str, list, ap);
+			parser(&str, ap, &list);
+			count += processor(&str, &list, ap);
+			printf("==%d\n", count);
 		}
-		ft_putchar(*str);
+		count += ft_putchar(*str);
 		str++;
-		count++;
 	}
+	return (count);
 }
 int		ft_printf(const char *format, ...)
 {
@@ -224,7 +223,7 @@ int		ft_printf(const char *format, ...)
 	va_start(ap, format);
 	count = start_function((char *)format, ap);
 	va_end(ap);
-	return count;
+	return (count);
 }
 
 int main(void)
@@ -244,9 +243,9 @@ int main(void)
 	int		m = -12345678;
 	char *s = "Heloooo";
 char *p = &s[3];
-//ft_printf("%1i, %1d, %1d, %1d, %1d, %1d, %1d, %1d\n", i, j, k, l, m, c, e, d);
-ft_printf("%%d %d\n", 5, 6);
-printf("%%d %d\n", 5, 6);
+//ft_printf("%-7.3i, %1d, %1d, %1d, %1d, %1d, %1d, %1d\n", -i, j, k, l, m, c, e, d);
+ft_printf("*%d\n", ft_printf("Hello\n", i));
+//printf("%%d %d\n", 5, 6);
 //printf("%1i, %1d, %1d, %1d, %1d, %1d, %1d, %1d", i, j, k, l, m, c, e, d);
 	return 0;
 }

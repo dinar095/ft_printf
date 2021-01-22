@@ -19,17 +19,20 @@ int		ft_putstr(char *s)
 	{
 		i += ft_putchar(*s++);
 	}
+	return (i);
 }
 int		ft_putnbr(int n)
 {
-	int i;
+	int		i;
+	int		count;
 
 	i = n % 10 < 0 ? -1 : 1;
 	if (n / 10)
-		ft_putnbr(n / 10);
+		count += ft_putnbr(n / 10);
 	else if (n < 0)
-		ft_putchar('-');
-	ft_putchar((n % 10) * i + '0');
+		count += ft_putchar('-');
+	count += ft_putchar((n % 10) * i + '0');
+	return (count);
 }
 void	*ft_strset(void *destination, int c, size_t n)
 {
