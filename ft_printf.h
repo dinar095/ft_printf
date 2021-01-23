@@ -6,7 +6,7 @@
 /*   By: desausag <desausag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 12:15:50 by desausag          #+#    #+#             */
-/*   Updated: 2021/01/22 21:29:45 by desausag         ###   ########.fr       */
+/*   Updated: 2021/01/23 14:55:19 by desausag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,9 @@ int		ft_putnbr(int n);
 int		ft_putstr(char *s);
 void	*ft_strset(void *destination, int c, size_t n);
 char	*ft_uitoa(unsigned int n);
-int 	x_function(p_list **list, unsigned long long x);
-int 	bx_function(p_list **list, unsigned long long x);
+int 	qx_function(p_list **list, unsigned long long x, int flag);
+//int 	bx_function(p_list **list, unsigned long long x);
+int 	b(p_list **list, unsigned long long x, char (*f)(unsigned long long n));
 
 
 #endif //DESAUSAG_FT_PRINTF_H

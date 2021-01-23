@@ -15,21 +15,21 @@ int 	ft_free(char **str)
 	return (1);
 }
 int wide_proc(int wide, char **d, char sym, int reverse) //возвращает строку с 0 спереди| В wide подать с учетом знака
-{
-	char 	*tmp;
-	int 	cint;
-	tmp = ft_calloc(wide, sizeof(char)); //создать строку
-	ft_strset(tmp, sym, wide); //забить всю строку символом с
-	cint = ft_strlen(*d);//длина числа без -
-	wide -= cint;
-	if (!reverse)
-		ft_memcpy(tmp + wide, *d, cint);//добавить число в конце
-	else
-		ft_memcpy(tmp, *d, cint); //добавить число в начале
-	free(*d);
-	*d = tmp;
-	return (ft_strlen(tmp));
-}
+//{
+//	char 	*tmp;
+//	int 	cint;
+//	tmp = ft_calloc(wide, sizeof(char)); //создать строку
+//	ft_strset(tmp, sym, wide); //забить всю строку символом с
+//	cint = ft_strlen(*d);//длина числа без -
+//	wide -= cint;
+//	if (!reverse)
+//		ft_memcpy(tmp + wide, *d, cint);//добавить число в конце
+//	else
+//		ft_memcpy(tmp, *d, cint); //добавить число в начале
+//	free(*d);
+//	*d = tmp;
+//	return (ft_strlen(tmp));
+//}
 int		int_function(p_list **list, int x)
 {
 	int		len;
