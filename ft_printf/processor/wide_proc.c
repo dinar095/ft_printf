@@ -17,7 +17,8 @@ int		wide_proc(int wide, char **d, char sym, int reverse)
 	char	*tmp0;
 	int		cint;
 
-	tmp0 = ft_calloc(wide + 1, sizeof(char));
+	if (!(tmp0 = ft_calloc(wide + 1, sizeof(char))))
+		return (0);
 	ft_strset(tmp0, sym, wide);
 	cint = ft_strlen(*d);
 	wide -= cint;

@@ -6,21 +6,23 @@
 /*   By: desausag <desausag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/23 17:45:27 by desausag          #+#    #+#             */
-/*   Updated: 2021/01/23 22:18:04 by desausag         ###   ########.fr       */
+/*   Updated: 2021/01/24 09:50:53 by desausag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ft_printf.h"
 
-static void	func_for_zero(t_list *strct, char **tmp)
+static int	func_for_zero(t_list *strct, char **tmp)
 {
 	char *tmp2;
 
 	strct->minus = 0;
 	strct->wide++;
 	tmp2 = *tmp;
-	*tmp = ft_strjoin("-", *tmp);
+	if(!(*tmp = ft_strjoin("-", *tmp)))
+		return (0);
 	free(tmp2);
+	return (1);
 }
 
 int			p_wide(t_list *strct, char **tmp)
